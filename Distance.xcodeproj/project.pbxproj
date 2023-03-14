@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		9F47857029BFF50A006F2DE9 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F47856F29BFF50A006F2DE9 /* main.swift */; };
+		9F47857729BFF530006F2DE9 /* Distance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F47857629BFF530006F2DE9 /* Distance.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +26,8 @@
 /* Begin PBXFileReference section */
 		9F47856C29BFF50A006F2DE9 /* Distance */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Distance; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F47856F29BFF50A006F2DE9 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		9F47857629BFF530006F2DE9 /* Distance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Distance.swift; sourceTree = "<group>"; };
+		9F47857829BFF7A1006F2DE9 /* sample (2).out */ = {isa = PBXFileReference; lastKnownFileType = text; path = "sample (2).out"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +61,8 @@
 			isa = PBXGroup;
 			children = (
 				9F47856F29BFF50A006F2DE9 /* main.swift */,
+				9F47857629BFF530006F2DE9 /* Distance.swift */,
+				9F47857829BFF7A1006F2DE9 /* sample (2).out */,
 			);
 			path = Distance;
 			sourceTree = "<group>";
@@ -120,6 +125,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F47857729BFF530006F2DE9 /* Distance.swift in Sources */,
 				9F47857029BFF50A006F2DE9 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
