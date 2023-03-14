@@ -11,7 +11,7 @@ class Distance : CustomStringConvertible {
   var description: String {
     "\(mile)m \(yard)y \(foot)' \(inches)\" "
     if mile == 0 && yard == 0 && foot == 0 && inches == 0 {
-       return "0\" "
+      return "0\" "
     }
     var m = mile > 0 ? "\(mile)m " : ""
     var y = yard > 0 ? "\(yard)y " : ""
@@ -70,6 +70,41 @@ class Distance : CustomStringConvertible {
       if mile < 0 {
         return nil
       }
+    }
+  }
+  private var totalInches: Int {
+    return mile * 1760 * 3 * 12 + yard * 3 * 12 + foot * 12 + inches
+  }
+  extension Distance: Equatable, Comparable {
+    static func == (lhs: Distance, rhs: Distance) -> Bool {
+      return lhs.totalInches == rhs.totalInches
+    }
+    
+    static func < (lhs: Distance, rhs: Distance) -> Bool {
+      return lhs.totalInches < rhs.totalInches
+    }
+  }
+  ​
+  extension Distance {
+    static func +(lhs: Distance, rhs: Distance) -> Distance {
+      return Distance(miles: lhs.mile + rhs.mile, yards: lhs.yard + rhs.yard, foot: lhs.foot + rhs.foot, inches: lhs.inches + rhs.inches)!
+    }
+    
+    static func -(lhs: Distance, rhs: Distance) -> Distance? {
+      if lhs.totalInches < rhs.totalInches {
+        return Distance()
+      } else {
+        return Distance(mile: lhs.mile - rhs.mile, yard: lhs.yard - rhs.yard, foot: lhs.foot - rhs.foot, inches: lhs.inches - rhs.inches)
+      }
+    }
+    
+    static func *(lhs: Distance, rhs: Int) -> Distance {
+      return Distance(mile: lhs.mile * rhs, yard: lhs.yard * rhs, foot: lhs.foot * rhs, inches: lhs.inches * rhs)!
+    }
+    
+    static func +=(lhs: Distance, rhs: Int) {
+      lhs.inches += rhs
+      lhs.simplify()
     }
   }
 }
