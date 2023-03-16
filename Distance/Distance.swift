@@ -19,6 +19,10 @@ class Distance : CustomStringConvertible {
     var i = inches > 0 ? "\(inches)\" " : ""
     return "(\(m)\(y)\(f)\(i))"
   }
+  //Constants for ease of checking----
+  private static let MAXYARDS = 1760
+  private static let MAXFEET = 3
+  private static let MAXINCHES = 12
   private var inches : Int = 0
   private var foot : Int = 0
   private var yard : Int = 0
@@ -72,39 +76,118 @@ class Distance : CustomStringConvertible {
       }
     }
   }
+  init?() {
+          mile = 0
+          yard = 0
+          foot = 0
+          inches = 0
+      }
   private var totalInches: Int {
     return mile * 1760 * 3 * 12 + yard * 3 * 12 + foot * 12 + inches
   }
-  extension Distance: Equatable, Comparable {
-    static func == (lhs: Distance, rhs: Distance) -> Bool {
-      return lhs.totalInches == rhs.totalInches
-    }
-    
-    static func < (lhs: Distance, rhs: Distance) -> Bool {
-      return lhs.totalInches < rhs.totalInches
-    }
-  }
-  ​
-  extension Distance {
-    static func +(lhs: Distance, rhs: Distance) -> Distance {
-      return Distance(miles: lhs.mile + rhs.mile, yards: lhs.yard + rhs.yard, foot: lhs.foot + rhs.foot, inches: lhs.inches + rhs.inches)!
-    }
-    
-    static func -(lhs: Distance, rhs: Distance) -> Distance? {
-      if lhs.totalInches < rhs.totalInches {
-        return Distance()
-      } else {
-        return Distance(mile: lhs.mile - rhs.mile, yard: lhs.yard - rhs.yard, foot: lhs.foot - rhs.foot, inches: lhs.inches - rhs.inches)
+  static func <(lhs: Distance, rhs: Distance) -> Bool {
+         if lhs.mile < rhs.mile { //If miles are smaller it will always be smaller
+             return true
+         } else if lhs.mile > rhs.mile { //If miles are larger it will always be larger
+             return false
+         }
+         //If it's not smaller or larger then it's equal and we continue to next unit
+         if lhs.yard < rhs.yard { //If yards are smaller...
+             return true
+         } else if lhs.yard > rhs.yard { //If yards are larger...
+             return false
+         }
+         //If it's not smaller or larger then it's equal and we continue to next unit
+         if lhs.foot < rhs.foot { //If feet are smaller...
+             return true
+         } else if lhs.foot > rhs.foot { //If feet are larger...
+             return false
+         }
+         //If it's not smaller or larger then it's equal and we continue to next unit
+         if lhs.inches < rhs.inches { //If inches are smaller...
+             return true
+         } else { //If this last unit is not smaller then the distance is not smaller
+             return false
+         }
+     }
+  private static func simplify(_ distance: Distance) -> Distance {
+         //Unwrap the new distance
+         if let sim = Distance(mile: distance.mile, yards: distance.yard, feet: distance.foot, inches: distance.inches) {
+             return sim
+         } else { //If invalid return a distance of 0
+             return Distance()!
+         }
+     }
+  static func +(lhs: Distance, rhs: Distance) -> Distance {
+          if let answer = Distance(miles: lhs.mile + rhs.mile, yards: lhs.yard + rhs.yard, feet: lhs.foot + rhs.foot, inches: lhs.inches + rhs.inches) {
+              return answer
+          }
+          return Distance()!
       }
-    }
-    
-    static func *(lhs: Distance, rhs: Int) -> Distance {
-      return Distance(mile: lhs.mile * rhs, yard: lhs.yard * rhs, foot: lhs.foot * rhs, inches: lhs.inches * rhs)!
-    }
-    
-    static func +=(lhs: Distance, rhs: Int) {
-      lhs.inches += rhs
-      lhs.simplify()
-    }
-  }
+  static func -(lhs: Distance, rhs: Distance) -> Distance? {
+          if lhs.mile >= rhs.mile { //Check that the first distance is not smaller than the second one
+              //Variables in order to do the substraction of values in case one of the variables from second distance is larger than its counterpart
+              var m = lhs.mile //The value being subtracted
+              var subM = rhs.mile //How much we substract
+              var y = lhs.yard //The value being subtracted
+              var subY = rhs.yard //How much we substract
+              var f = lhs.foot //The value being subtracted
+              var subF = rhs.foot //How much we substract
+              var i = lhs.inches //The value being subtracted
+              var subI = rhs.inches //How much we substract
+              
+              //Do the operations to get any extra substraction from the feet
+              while subI > 0 { //While there are still inches to substract
+                  if subI > i { //If we substract more than we have
+                      subF += 1 //We substract more from the next bigger unit
+                      subI -= i
+                      i = MAXINCHES //Set value at max to keep substracting
+                  } else { //If we can substract enough we just reduce the numbers
+                      i -= subI //Substract the value
+                      subI = 0
+                  }
+              }
+              //Repeat the steps above for the different units
+              while subF > 0 {
+                  if subF > f {
+                      subY += 1
+                      subF -= f
+                      f = MAXFEET
+                  } else {
+                      f -= subF
+                      subF = 0
+                  }
+              }
+              //Repeat the steps above for the different units
+              while subY > 0 {
+                  if subY > y {
+                      subM += 1
+                      subY -= y
+                      y = MAXYARDS
+                  } else {
+                      y -= subY
+                      subY = 0
+                  }
+              }
+              
+              m -= subM //Set the value of the miles
+              if let answer = Distance(mile: m, yard: y, foot: f, inches: i) { //Unwrap the new distance and make sure its formatted
+                  return answer
+              } else {
+                  return Distance()!
+              }
+          } else { //If first distance is smaller than second return nil
+              return nil
+          }
+    //Method to add inches to distance
+        func += (lhs:Distance, rhs: Int) {
+            lhs.inches = lhs.inches + rhs //Add the inches
+            let sim = Distance.simplify(lhs) //Reformat the values
+            //Set the new values to the instance
+            lhs.inches = sim.inches
+            lhs.foot = sim.foot
+            lhs.yard = sim.yard
+            lhs.mile = sim.mile
+        }
+      }
 }
